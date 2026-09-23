@@ -1,11 +1,15 @@
-Создать проект АПИ в своем репозитории
-Скинуть приглашение на почту szt-vadim@yandex.ru
+import requests
 
-Проект должен быть выполнен согласно ООП
-Описаны должны быть 3 метода раздела заметки (Гет, пост, делит)
-урл http://185.240.103.201:8000/apidocs/#/
 
-обязательно создать файл с тестами и базовыми проерками
-необходимо для выбранных методов написать тесты для каждого из указанных в сваггере статус кодов (200, 400, 404 и тд)
+class BaseApi:
+    BASE_URL = "http://185.240.103.201:8000"
+    HEADERS = {"accept": "application/json"}
 
-Вам придется реализовать также методы регистрации и авторизации
+    def get(self, endpoint, headers=None, **kwargs):
+        return requests.get(f"{self.BASE_URL}/{endpoint}", headers=headers, **kwargs)
+
+    def post(self, endpoint, headers=None, json=None, **kwargs):
+        return requests.post(f"{self.BASE_URL}/{endpoint}", json=json, headers=headers, **kwargs)
+
+    def delete(self, endpoint, headers=None, **kwargs):
+        return requests.delete(f"{self.BASE_URL}/{endpoint}", headers=headers, **kwargs)
