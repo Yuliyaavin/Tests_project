@@ -11,5 +11,6 @@ class RegAuth(BaseApi):
         self.resp_login = self.post("api/login", self.build_headers(), json=json)
         return self.resp_login
 
-    def get_token(self):
-        return self.resp_login.json()["token"]
+    def get_token(self, email, password):
+        return self.login(email, password).json()["token"]
+

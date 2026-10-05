@@ -17,7 +17,7 @@ def register_user():
     reg_auth = RegAuth()
     email = os.getenv("EMAIL")
     password = os.getenv("PASSWORD")
-    username = os.getenv("USERNAME")
+    username = os.getenv("USER_NAME")
     resp = reg_auth.create_user(email, password, username)
     if resp.status_code not in (201, 409):
         raise RuntimeError(f"Registration failed: {resp.status_code}")
@@ -25,8 +25,7 @@ def register_user():
 
 @pytest.fixture
 def token(user, register_user):
-    user.login(register_user["email"], register_user["password"])
-    return user.get_token()
+    return user.get_token(register_user["email"], register_user["password"])
 
 @pytest.fixture
 def notes():
@@ -59,9 +58,8 @@ def outsider_token():
     reg_auth2 = RegAuth()
     email2 = os.getenv("EMAIL2")
     password2 = os.getenv("PASSWORD2")
-    username2 = os.getenv("USERNAME2")
+    username2 = os.getenv("USER_NAME2")
     resp = reg_auth2.create_user(email2, password2, username2)
     if resp.status_code not in (201, 409):
         raise RuntimeError(f"Registration failed: {resp.status_code}")
-    reg_auth2.login(email2, password2)
-    return reg_auth2.get_token()
+    return reg_auth2.get_token(email2, password2)
