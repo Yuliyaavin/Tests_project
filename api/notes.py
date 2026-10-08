@@ -15,3 +15,7 @@ class Notes(BaseApi):
     def delete_note(self, note_id, token=None, with_auth=True):
         headers = self.build_headers(token, with_auth)
         return self.delete(f"{self.ENDPOINT}/{note_id}", headers)
+
+    def get_note_by_title(self, title, token=None):
+        all_notes = self.get_notes(token=token).json()
+        return next(n["id"] for n in all_notes if n["title"] == title)

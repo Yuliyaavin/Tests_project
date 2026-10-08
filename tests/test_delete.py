@@ -19,8 +19,8 @@ class TestDeleteNote:
         assert response.status_code == 403
         assert res_json["message"] == "Token is invalid or expired!"
 
-    def test_delete_note_outsider_token(self, outsider_token, setup_teardown, notes):
-        response = notes.delete_note(setup_teardown, token=outsider_token)
+    def test_delete_note_outsider_token(self, second_token, setup_teardown, notes):
+        response = notes.delete_note(setup_teardown, token=second_token)
         res_json = response.json()
         assert response.status_code == 409
         assert res_json["message"] == "Not authorized to delete this note"

@@ -1,14 +1,16 @@
+import uuid
+
+
 class TestCreateNote:
 
     def test_create_note(self, token, notes, teardown_note):
-        response = notes.create_note("lol", "kek", token=token)
+        title = uuid.uuid4().hex
+        response = notes.create_note("lol", title, token=token)
         res_json = response.json()
         assert response.status_code == 201
         assert res_json["message"] == "Заметка создана!"
 
-        all_notes = notes.get_notes(token=token).json()
-        note_id = max(n["id"] for n in all_notes if n["content"] == "lol" and n["title"] == "kek")
-        teardown_note.append(note_id)
+        teardown_note.append(notes.get_note_by_title(title, token=token))
 
     def test_create_note_without_token(self, notes):
         response = notes.create_note("lol", "kek")

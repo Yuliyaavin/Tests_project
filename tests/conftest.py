@@ -4,28 +4,17 @@ import pytest
 from dotenv import load_dotenv
 
 from api.notes import Notes
-from api.persons import RegAuth
+from api.person import Person
 
 load_dotenv()
 
-@pytest.fixture(scope='function')
+@pytest.fixture
 def user():
-    return RegAuth()
-
-@pytest.fixture(scope="session")
-def register_user():
-    reg_auth = RegAuth()
-    email = os.getenv("EMAIL")
-    password = os.getenv("PASSWORD")
-    username = os.getenv("USER_NAME")
-    resp = reg_auth.create_user(email, password, username)
-    if resp.status_code not in (201, 409):
-        raise RuntimeError(f"Registration failed: {resp.status_code}")
-    return {"email": email, "password": password}
+    return Person()
 
 @pytest.fixture
-def token(user, register_user):
-    return user.get_token(register_user["email"], register_user["password"])
+def token(user):
+    return user.get_token(os.getenv("EMAIL"), os.getenv("PASSWORD"))
 
 @pytest.fixture
 def notes():
@@ -45,8 +34,8 @@ def note_id(token, notes):
 def teardown_note(token, notes):
     notes_id = []
     yield notes_id
-    for p in notes_id:
-        notes.delete_note(p, token=token)
+    for note_id in notes_id:
+        notes.delete_note(note_id, token=token)
 
 @pytest.fixture
 def setup_teardown(new_note, note_id, teardown_note):
@@ -54,12 +43,5 @@ def setup_teardown(new_note, note_id, teardown_note):
     yield note_id
 
 @pytest.fixture
-def outsider_token():
-    reg_auth2 = RegAuth()
-    email2 = os.getenv("EMAIL2")
-    password2 = os.getenv("PASSWORD2")
-    username2 = os.getenv("USER_NAME2")
-    resp = reg_auth2.create_user(email2, password2, username2)
-    if resp.status_code not in (201, 409):
-        raise RuntimeError(f"Registration failed: {resp.status_code}")
-    return reg_auth2.get_token(email2, password2)
+def second_token(user):
+    return user.get_token(os.getenv("EMAIL2"), os.getenv("PASSWORD2"))
