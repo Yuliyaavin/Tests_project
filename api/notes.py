@@ -1,21 +1,18 @@
-from api.base_api import BaseApi
+from api.personal_api import PersonalAPI
 
 
-class Notes(BaseApi):
+class Notes(PersonalAPI):
     ENDPOINT = "api/notes"
-    def get_notes(self, token=None, with_auth=True):
-        headers = self.build_headers(token, with_auth)
-        return self.get(self.ENDPOINT, headers)
+    def get_notes(self, auth=True):
+        return self.get(self.ENDPOINT, headers=self._headers(auth))
 
-    def create_note(self, content, title, token=None, with_auth=True):
-        headers = self.build_headers(token, with_auth)
+    def create_note(self, content, title, auth=True):
         json = {"content": content, "title": title}
-        return self.post(self.ENDPOINT, headers, json)
+        return self.post(self.ENDPOINT, json=json, headers=self._headers(auth))
 
-    def delete_note(self, note_id, token=None, with_auth=True):
-        headers = self.build_headers(token, with_auth)
-        return self.delete(f"{self.ENDPOINT}/{note_id}", headers)
+    def delete_note(self, note_id, auth=True):
+        return self.delete(f"{self.ENDPOINT}/{note_id}", headers=self._headers(auth))
 
-    def get_note_by_title(self, title, token=None):
-        all_notes = self.get_notes(token=token).json()
+    def get_note_by_title(self, title):
+        all_notes = self.get_notes().json()
         return next(n["id"] for n in all_notes if n["title"] == title)

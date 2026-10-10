@@ -13,9 +13,3 @@ class BaseApi:
 
     def delete(self, endpoint, headers=None, **kwargs):
         return requests.delete(f"{self.BASE_URL}/{endpoint}", headers=headers, **kwargs)
-
-    def build_headers(self, token=None, with_auth=True):
-        headers = {**self.HEADERS}
-        if with_auth and token:
-            headers["Authorization"] = f"Bearer {token}"
-        return headers

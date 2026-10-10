@@ -3,23 +3,23 @@ import uuid
 
 class TestCreateNote:
 
-    def test_create_note(self, token, notes, teardown_note):
+    def test_create_note(self, notes, teardown_note):
         title = uuid.uuid4().hex
-        response = notes.create_note("lol", title, token=token)
+        response = notes.create_note("lol", title)
         res_json = response.json()
         assert response.status_code == 201
         assert res_json["message"] == "Заметка создана!"
 
-        teardown_note.append(notes.get_note_by_title(title, token=token))
+        teardown_note.append(notes.get_note_by_title(title))
 
     def test_create_note_without_token(self, notes):
-        response = notes.create_note("lol", "kek")
+        response = notes.create_note("lol", "kek", auth=False)
         res_json = response.json()
         assert response.status_code == 401
         assert res_json["message"] == "Token is missing!"
 
-    def test_create_note_invalid_token(self, notes):
-        response = notes.create_note("lol", "kek", token="False_token")
+    def test_create_note_invalid_token(self, notes_invalid_token):
+        response = notes_invalid_token.create_note("lol", "kek")
         res_json = response.json()
         assert response.status_code == 403
         assert res_json["message"] == "Token is invalid or expired!"

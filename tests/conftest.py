@@ -1,4 +1,5 @@
 import os
+import uuid
 
 import pytest
 from dotenv import load_dotenv
@@ -17,31 +18,38 @@ def token(user):
     return user.get_token(os.getenv("EMAIL"), os.getenv("PASSWORD"))
 
 @pytest.fixture
-def notes():
-    return Notes()
+def notes(token):
+    return Notes(token)
 
 @pytest.fixture()
-def new_note(token, notes):
-    response = notes.create_note("lol", "kek", token=token)
-    return response
+def note_title():
+    return uuid.uuid4().hex
 
 @pytest.fixture()
-def note_id(token, notes):
-    all_notes = notes.get_notes(token=token).json()
-    return max(n["id"] for n in all_notes if n["content"] == "lol" and n["title"] == "kek")
+def note_id(notes, note_title):
+    notes.create_note("lol", note_title)
+    return notes.get_note_by_title(note_title)
 
 @pytest.fixture
-def teardown_note(token, notes):
+def teardown_note(notes):
     notes_id = []
     yield notes_id
-    for note_id in notes_id:
-        notes.delete_note(note_id, token=token)
+    for n_id in notes_id:
+        notes.delete_note(n_id)
 
 @pytest.fixture
-def setup_teardown(new_note, note_id, teardown_note):
+def setup_teardown(note_id, teardown_note):
     teardown_note.append(note_id)
     yield note_id
 
 @pytest.fixture
+def notes_invalid_token():
+    return Notes("False_token")
+
+@pytest.fixture
 def second_token(user):
     return user.get_token(os.getenv("EMAIL2"), os.getenv("PASSWORD2"))
+
+@pytest.fixture
+def notes_outsider(second_token):
+    return Notes(second_token)
