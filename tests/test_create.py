@@ -10,7 +10,7 @@ class TestCreateNote:
         assert response.status_code == 201
         assert res_json["message"] == "Заметка создана!"
 
-        teardown_note.append(notes.get_note_by_title(title))
+        teardown_note.append(notes.get_note_id_by_title(title))
 
     def test_create_note_without_token(self, notes):
         response = notes.create_note("lol", "kek", auth=False)
