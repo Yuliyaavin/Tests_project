@@ -22,13 +22,10 @@ def notes(token):
     return Notes(token)
 
 @pytest.fixture()
-def note_title():
-    return uuid.uuid4().hex
-
-@pytest.fixture()
-def note_id(notes, note_title):
-    notes.create_note("lol", note_title)
-    return notes.get_note_by_title(note_title)
+def note_id(notes):
+    title = uuid.uuid4().hex
+    notes.create_note("lol", title)
+    return notes.get_note_id_by_title(title)
 
 @pytest.fixture
 def teardown_note(notes):
