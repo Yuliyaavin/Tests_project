@@ -13,6 +13,6 @@ class Notes(PersonalAPI):
     def delete_note(self, note_id, auth=True):
         return self.delete(f"{self.ENDPOINT}/{note_id}", headers=self._headers(auth))
 
-    def get_note_by_title(self, title):
+    def get_note_id_by_title(self, title):
         all_notes = self.get_notes().json()
         return next(n["id"] for n in all_notes if n["title"] == title)
