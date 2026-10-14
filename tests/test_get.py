@@ -4,8 +4,7 @@ class TestGetNote:
         response = notes.get_notes()
         res_json = response.json()
         assert response.status_code == 200
-        for note in res_json:
-            assert len(note) > 0
+        assert len(res_json) > 0
 
     def test_get_note_without_token(self, notes):
         response = notes.get_notes(auth=False)
